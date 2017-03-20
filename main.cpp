@@ -45,7 +45,7 @@ intarr increasing_numbers(int n) {
 intarr decreasing_numbers(int n) {
     srand((unsigned int) time(0));
     intarr tab;
-    tab[0] = random_numbers(1)[0];
+    tab = random_numbers(1);
     for (int i = 1; i < n; i++) {
         tab[i] = tab[i - 1] - rand() % 100;
     }
@@ -60,7 +60,7 @@ intarr constant_numbers(int n) {
 
 intarr A_shape_numbers(int n) {
     srand((unsigned int) time(0));
-    intarr tab = {random_numbers(1)[0]};
+    intarr tab = random_numbers(1);
     for (int i = 1; i < n / 2 + 1; i++) {
         tab[i] = tab[i - 1] + (rand() % 100);
     }
