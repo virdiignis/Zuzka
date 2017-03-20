@@ -130,7 +130,7 @@ list<int> merge(list<int> a, list<int> b) {
 }
 
 list<int> merge_sort_backend(list<int> tab) {
-    if (tab.size() < 2) return tab;
+    if (tab.size() == 1) return tab;
     list<int> a, b;
     int i = 0;
     list<int>::iterator it = tab.begin();
@@ -156,36 +156,32 @@ intarr merge_sort(intarr tab, int n) {
     return ret;
 }
 
-int qsort(intarr tab, int start, int n) {
-    int x = (start + n) / 2;
-    int j = n;
-    int i = start;
-
-    while (true) {
-        while (tab[j] > tab[x]) {
-            j--;
-        }
-        while (tab[i] < tab[x]) {
-            i++;
-        }
-        if (i < j) {
-            int helper = tab[j];
-            tab[j] = tab[i];
-            tab[i] = helper;
-            j--;
-            i++;
-        } else {
-            return j;
-        }
+list<int> quick_sort_backend(list<int> nrs) {
+    if (nrs.size() < 2) return nrs;
+    unsigned long split_index = rand() % nrs.size();
+    list<int>::iterator temp = nrs.begin();
+    for (int i = 0; i < split_index; i++) temp++;
+    int split_value = *temp;
+    nrs.remove(split_value);
+    list<int> l, r;
+    for (list<int>::iterator it = nrs.begin(); it != nrs.end(); it++) {
+        if (*it < split_value) l.push_back(*it);
+        else r.push_back(*it);
     }
+    list<int> res = quick_sort_backend(l);
+    res.push_back(split_value);
+    res.splice(res.end(), quick_sort_backend(r));
+    return res;
 }
 
-void quick_sort(intarr tab, int start, int n) {
-    if (start < n) {
-        int middle = qsort(tab, start, n);
-        quick_sort(tab, start, n);
-        quick_sort(tab, middle + 1, n);
-    }
+intarr quick_sort(intarr tab, int n) {
+    list<int> numbers;
+    for (int i = 0; i < n; i++) numbers.push_back(tab[i]);
+    numbers = quick_sort_backend(numbers);
+    intarr ret;
+    int i = 0;
+    for (list<int>::iterator it = numbers.begin(); it != numbers.end(); it++) ret[i++] = *it;
+    return ret;
 }
 
 void quick_sort_iterative(intarr tab, int start, int n) {
@@ -227,7 +223,7 @@ double merge_time(intarr tab, int n) {
 
 double quick_time(intarr tab, int n) {
     clock_t my_clock = clock();
-    quick_sort(tab, 0, n);
+    quick_sort(tab, n);
     my_clock = clock() - my_clock;
     double time = (double(my_clock)) / CLOCKS_PER_SEC;
     return time;
@@ -281,9 +277,9 @@ bool issorted(intarr tab) {
 }
 
 int main() {
-    typedef array<sorting_pointer, 4> sorting_array;
+    typedef array<sorting_pointer, 5> sorting_array;
     typedef array<generation_pointer, 5> generators_array;
-    sorting_array sorting_functions = {bubble_sort, insertion_sort, selection_sort, merge_sort};
+    sorting_array sorting_functions = {bubble_sort, insertion_sort, selection_sort, merge_sort, quick_sort};
     generators_array generators_functions = {random_numbers, increasing_numbers, decreasing_numbers, constant_numbers,
                                              A_shape_numbers};
 
@@ -298,6 +294,8 @@ int main() {
         }
         cout << endl;
     }
-
+//    list<int> b = {3, 1, 8, -8};
+//    list<int> a = quick_sort_backend(b);
+//    for (list<int>::iterator it=a.begin(); it != a.end(); it++) cout << *it << endl;
     return 0;
 }
