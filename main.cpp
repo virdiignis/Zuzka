@@ -3,6 +3,7 @@
 #include <fstream>
 #include <array>
 #include <iostream>
+#include <list>
 
 #define N 11
 
@@ -106,36 +107,54 @@ intarr selection_sort(intarr tab, int n) {
     return tab;
 }
 
-void mrg(intarr tab, int start, int n) {
-    int helper[n];
-    for (int i = start; i <= n; i++) {
-        helper[i] = tab[i];
-    }
-    int firsthalf = start;
-    int middle = n / 2;
-    int secondhalf = middle + 1;
+list<int> merge(list<int> a, list<int> b) {
+    list<int> result;
+    list<int>::iterator it1 = a.begin(), it2 = b.begin();
+    while (it1 != a.end() && it2 != b.end()) {
+        if ((*it1) < (*it2))
+            result.push_back(*it1++);
+        else
+            result.push_back(*it2++);
 
-    for (int i = start; firsthalf <= secondhalf && middle <= n; i++) {
-        if (tab[firsthalf] < tab[secondhalf]) {
-            helper[i] = tab[firsthalf];
-            firsthalf++;
-        } else {
-            helper[i] = tab[secondhalf];
-            secondhalf++;
-        }
     }
-    for (int i = start; i <= n; i++) {
-        tab[i] = helper[i];
+    if (it1 == a.end())
+        while (it2 != b.end())
+            result.push_back(*it2++);
+
+    if (it2 == b.end())
+        while (it1 != a.end())
+            result.push_back(*it1++);
+
+
+    return result;
+}
+
+list<int> merge_sort_backend(list<int> tab) {
+    if (tab.size() < 2) return tab;
+    list<int> a, b;
+    int i = 0;
+    list<int>::iterator it = tab.begin();
+    while (i < tab.size() / 2) {
+        a.push_back(*it++);
+        i++;
     }
-} //n = end of array we are sorting
-void merge_sort(intarr tab, int start, int n) {
-    int middle = n / 2;
-    if (start < n) {
-        merge_sort(tab, start, middle);
-        merge_sort(tab, middle + 1, n);
-        mrg(tab, start, n);
+    while (i < tab.size()) {
+        b.push_back(*it++);
+        i++;
     }
+
+    return merge(merge_sort_backend(a), merge_sort_backend(b));
 }// start w main 0
+
+intarr merge_sort(intarr tab, int n) {
+    list<int> numbers;
+    for (int i = 0; i < n; i++) numbers.push_back(tab[i]);
+    numbers = merge_sort_backend(numbers);
+    intarr ret;
+    int i = 0;
+    for (list<int>::iterator it = numbers.begin(); it != numbers.end(); it++) ret[i++] = *it;
+    return ret;
+}
 
 int qsort(intarr tab, int start, int n) {
     int x = (start + n) / 2;
@@ -200,7 +219,7 @@ double selection_time(intarr tab, int n) {
 
 double merge_time(intarr tab, int n) {
     clock_t my_clock = clock();
-    merge_sort(tab, 0, n);
+    merge_sort(tab, n);
     my_clock = clock() - my_clock;
     double time = (double(my_clock)) / CLOCKS_PER_SEC;
     return time;
@@ -262,9 +281,9 @@ bool issorted(intarr tab) {
 }
 
 int main() {
-    typedef array<sorting_pointer, 3> sorting_array;
+    typedef array<sorting_pointer, 4> sorting_array;
     typedef array<generation_pointer, 5> generators_array;
-    sorting_array sorting_functions = {bubble_sort, insertion_sort, selection_sort};
+    sorting_array sorting_functions = {bubble_sort, insertion_sort, selection_sort, merge_sort};
     generators_array generators_functions = {random_numbers, increasing_numbers, decreasing_numbers, constant_numbers,
                                              A_shape_numbers};
 
@@ -273,13 +292,12 @@ int main() {
         intarr unsorted = (*gen_func)(N);
         for (sorting_array::iterator func = sorting_functions.begin(); func != sorting_functions.end(); func++) {
             time_t temp = time(NULL);
-            int i = 1000000;
-            while (i --> 0)(*func)(unsorted, N);
-            cout << time(NULL) - temp << " ";
+            int i = 1;
+            while (i-- > 0) cout << issorted((*func)(unsorted, N));
+            //cout << time(NULL) - temp << " ";
         }
         cout << endl;
     }
-
 
     return 0;
 }
