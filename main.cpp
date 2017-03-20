@@ -15,15 +15,6 @@ typedef intarr (*sorting_pointer)(intarr, int);
 
 typedef intarr (*generation_pointer)(int);
 
-const string file_name = "sorting_time.csv";
-
-struct data {
-    string name;
-    double time[9];
-};
-
-array<struct data, 29> time_array;
-
 intarr random_numbers(int n) {
     srand((unsigned int) time(0));
     intarr tab;
@@ -183,13 +174,6 @@ intarr quick_sort(intarr tab, int n) {
     int i = 0;
     for (list<int>::iterator it = numbers.begin(); it != numbers.end(); it++) ret[i++] = *it;
     return ret;
-}
-
-bool issorted(intarr tab) {
-    for (intarr::iterator it = tab.begin() + 1; it != tab.end(); it++) {
-        if (*(it - 1) > *it) return false;
-    }
-    return true;
 }
 
 int main() {
