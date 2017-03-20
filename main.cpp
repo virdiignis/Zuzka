@@ -114,14 +114,13 @@ void mrg(intarr tab, int start, int n) {
     int firsthalf = start;
     int middle = n / 2;
     int secondhalf = middle + 1;
-    int iterator = start;
 
-    for (iterator; firsthalf <= secondhalf && middle <= n; iterator++) {
+    for (int i = start; firsthalf <= secondhalf && middle <= n; i++) {
         if (tab[firsthalf] < tab[secondhalf]) {
-            helper[iterator] = tab[firsthalf];
+            helper[i] = tab[firsthalf];
             firsthalf++;
         } else {
-            helper[iterator] = tab[secondhalf];
+            helper[i] = tab[secondhalf];
             secondhalf++;
         }
     }
