@@ -25,7 +25,7 @@ array<struct data, 29> time_array;
 
 intarr random_numbers(int n) {
     srand((unsigned int) time(0));
-    array<int, N> tab;
+    intarr tab;
     for (int i = 0; i < n; i++) {
         tab[i] = rand() % 100 * (rand() * 100 < 50 ? -1 : 1);
     }
@@ -35,7 +35,7 @@ intarr random_numbers(int n) {
 intarr increasing_numbers(int n) {
     srand((unsigned int) time(0));
     intarr tab;
-    tab[0] = random_numbers(1)[0];
+    tab = random_numbers(1);
     for (int i = 1; i < n; i++) {
         tab[i] = tab[i - 1] + rand() % 100;
     }
