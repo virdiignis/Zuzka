@@ -1,11 +1,11 @@
 #include <cstdio>
-#include <ctime>
+#include <chrono>
 #include <fstream>
 #include <array>
 #include <iostream>
 #include <list>
 
-#define N 2000
+#define N 100000
 
 using namespace std;
 
@@ -185,91 +185,6 @@ intarr quick_sort(intarr tab, int n) {
     return ret;
 }
 
-void quick_sort_iterative(intarr tab, int start, int n) {
-
-}
-
-double insertion_time(intarr tab, int n) {
-    clock_t my_clock;
-    my_clock = clock();
-    insertion_sort(tab, n);
-    my_clock = clock() - my_clock;
-    double time = (double(my_clock)) / CLOCKS_PER_SEC;
-    return time;
-}
-
-double bubble_time(intarr tab, int n) {
-    clock_t my_clock = clock();
-    bubble_sort(tab, n);
-    my_clock = clock() - my_clock;
-    double time = (double(my_clock)) / CLOCKS_PER_SEC;
-    return time;
-}
-
-double selection_time(intarr tab, int n) {
-    clock_t my_clock = clock();
-    selection_sort(tab, n);
-    my_clock = clock() - my_clock;
-    double time = (double(my_clock)) / CLOCKS_PER_SEC;
-    return time;
-}
-
-double merge_time(intarr tab, int n) {
-    clock_t my_clock = clock();
-    merge_sort(tab, n);
-    my_clock = clock() - my_clock;
-    double time = (double(my_clock)) / CLOCKS_PER_SEC;
-    return time;
-}
-
-double quick_time(intarr tab, int n) {
-    clock_t my_clock = clock();
-    quick_sort(tab, n);
-    my_clock = clock() - my_clock;
-    double time = (double(my_clock)) / CLOCKS_PER_SEC;
-    return time;
-}
-
-void insertion(intarr helper, int index, int n) {
-    for (int i = 0; i < 10; i++) {
-        time_array[index].time[i] = insertion_time(helper, n);
-        n += 20000;
-    }
-}
-
-void bubble(intarr helper, int index, int n) {
-    for (int i = 0; i < 10; i++) {
-        time_array[index].time[i] = bubble_time(helper, n);
-        n += 20000; //hello is it me you lookin for
-    }
-}
-
-void selection(intarr helper, int index, int n) {
-    for (int i = 0; i < 10; i++) {
-        time_array[index].time[i] = selection_time(helper, n);
-        n += 20000;//helo is it me you lookin for
-    }
-}
-
-void merge(intarr helper, int index, int n) {
-    for (int i = 0; i < 10; i++) {
-        time_array[index].time[i] = merge_time(helper, n);
-        n += 20000;//helo is it me you lookin for
-    }
-}
-
-void save_to_file() {
-    ofstream base;
-    base.open(file_name);
-    for (int i = 0; i < 20; i++) {
-        base << time_array[i].name << ",\n";
-        for (int j = 0; j < 10; j++) {
-            base << time_array[i].time[j] << ",";
-        }
-    }
-    base.close();
-}
-
 bool issorted(intarr tab) {
     for (intarr::iterator it = tab.begin() + 1; it != tab.end(); it++) {
         if (*(it - 1) > *it) return false;
@@ -284,16 +199,21 @@ int main() {
     generators_array generators_functions = {random_numbers, increasing_numbers, decreasing_numbers, constant_numbers,
                                              A_shape_numbers};
 
-    for (generators_array::iterator gen_func = generators_functions.begin();
-         gen_func != generators_functions.end(); gen_func++) {
-        intarr unsorted = (*gen_func)(N);
-        for (sorting_array::iterator func = sorting_functions.begin(); func != sorting_functions.end(); func++) {
-            time_t temp = time(NULL);
-            int i = 1;
-            while (i-- > 0) cout << issorted((*func)(unsorted, N)) << " ";
-            //cout << time(NULL) - temp << " ";
+    for (int n = 10; n < 100000; n *= 10) {
+        cout << n << endl;
+        for (generators_array::iterator gen_func = generators_functions.begin();
+             gen_func != generators_functions.end(); gen_func++) {
+            intarr unsorted = (*gen_func)(N);
+            for (sorting_array::iterator func = sorting_functions.begin(); func != sorting_functions.end(); func++) {
+                long temp = chrono::duration_cast<chrono::milliseconds>(
+                        chrono::system_clock::now().time_since_epoch()).count();
+                int i = 1;
+                while (i-- > 0) (*func)(unsorted, n);
+                cout << chrono::duration_cast<chrono::milliseconds>(
+                        chrono::system_clock::now().time_since_epoch()).count() - temp << " ";
+            }
+            cout << endl;
         }
-        cout << endl;
     }
 //    list<int> b = {3, 1, 8, -8};
 //    list<int> a = quick_sort_backend(b);
