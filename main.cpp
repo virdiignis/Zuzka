@@ -5,7 +5,7 @@
 #include <iostream>
 #include <list>
 
-#define N 11
+#define N 2000
 
 using namespace std;
 
@@ -162,14 +162,15 @@ list<int> quick_sort_backend(list<int> nrs) {
     list<int>::iterator temp = nrs.begin();
     for (int i = 0; i < split_index; i++) temp++;
     int split_value = *temp;
-    nrs.remove(split_value);
+    unsigned int split_count = 0;
     list<int> l, r;
     for (list<int>::iterator it = nrs.begin(); it != nrs.end(); it++) {
         if (*it < split_value) l.push_back(*it);
+        else if (*it == split_value) split_count++;
         else r.push_back(*it);
     }
     list<int> res = quick_sort_backend(l);
-    res.push_back(split_value);
+    while (split_count-- > 0) res.push_back(split_value);
     res.splice(res.end(), quick_sort_backend(r));
     return res;
 }
@@ -289,7 +290,7 @@ int main() {
         for (sorting_array::iterator func = sorting_functions.begin(); func != sorting_functions.end(); func++) {
             time_t temp = time(NULL);
             int i = 1;
-            while (i-- > 0) cout << issorted((*func)(unsorted, N));
+            while (i-- > 0) cout << issorted((*func)(unsorted, N)) << " ";
             //cout << time(NULL) - temp << " ";
         }
         cout << endl;
