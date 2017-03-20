@@ -5,7 +5,7 @@
 #include <iostream>
 #include <list>
 
-#define N 100000
+#define N 200000
 
 using namespace std;
 
@@ -183,18 +183,18 @@ int main() {
     generators_array generators_functions = {random_numbers, increasing_numbers, decreasing_numbers, constant_numbers,
                                              A_shape_numbers};
 
-    for (int n = 10; n < 100000; n *= 10) {
+    for (int n = 2000; n < N; n += 2000) {
         cout << n << endl;
         for (generators_array::iterator gen_func = generators_functions.begin();
              gen_func != generators_functions.end(); gen_func++) {
             intarr unsorted = (*gen_func)(N);
             for (sorting_array::iterator func = sorting_functions.begin(); func != sorting_functions.end(); func++) {
-                long temp = chrono::duration_cast<chrono::milliseconds>(
-                        chrono::system_clock::now().time_since_epoch()).count();
+                chrono::high_resolution_clock::time_point t1 = chrono::high_resolution_clock::now();
                 int i = 1;
                 while (i-- > 0) (*func)(unsorted, n);
-                cout << chrono::duration_cast<chrono::milliseconds>(
-                        chrono::system_clock::now().time_since_epoch()).count() - temp << " ";
+                chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
+                long duration = chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
+                cout << duration << " ";
             }
             cout << endl;
         }
