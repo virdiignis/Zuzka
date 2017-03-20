@@ -183,8 +183,10 @@ int main() {
     generators_array generators_functions = {random_numbers, increasing_numbers, decreasing_numbers, constant_numbers,
                                              A_shape_numbers};
 
+    ofstream results;
+    results.open("sorting_time.csv");
     for (int n = 2000; n < N; n += 2000) {
-        cout << n << endl;
+        results << n << endl;
         for (generators_array::iterator gen_func = generators_functions.begin();
              gen_func != generators_functions.end(); gen_func++) {
             intarr unsorted = (*gen_func)(N);
@@ -194,11 +196,12 @@ int main() {
                 while (i-- > 0) (*func)(unsorted, n);
                 chrono::high_resolution_clock::time_point t2 = chrono::high_resolution_clock::now();
                 long duration = chrono::duration_cast<chrono::microseconds>(t2 - t1).count();
-                cout << duration << " ";
+                results << duration << ",";
             }
-            cout << endl;
+            results << endl;
         }
     }
+    results.close();
 //    list<int> b = {3, 1, 8, -8};
 //    list<int> a = quick_sort_backend(b);
 //    for (list<int>::iterator it=a.begin(); it != a.end(); it++) cout << *it << endl;
